@@ -14,7 +14,7 @@ router.get('/users/:name', function(req, res) {
   var list = tweetBank.find({name: username})
   console.log(list)
   console.log(list.content);
-  res.render('index.html', {tweets: list});
+  res.render('index.html', {tweets: list, showForm: true, username: username });
 })
 
 router.post('/tweets', function(req, res) {
