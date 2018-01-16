@@ -1,13 +1,13 @@
 // express is helping us manage requests
 // node: a place where you can run code
 
-
 const express = require( 'express' );
 const app = express();
 const morgan = require('morgan');
 // npm install morgan --save (to make sure that future users have access)
 const nunjucks = require('nunjucks');
 const routes = require('./routes');
+const bodyParser = require('body-parser');
 
 /* how to require
 We've seen three ways to require modules:
@@ -16,16 +16,28 @@ We've seen three ways to require modules:
     If the module was installed via npm, we can use the name: var nunjucks = require('nunjucks')
     If the module is one we've written, we need the path: var greeter = require('./greeter')
 
-*/
-
 app.use(function(req, res, next){
     console.log(`Request Type: ${req.method}, ID: ${req.originalUrl}`);
     next();
 });
 
-/*
-app.use(morgan);
 */
+
+// create application/json parser
+const jsonParser = bodyParser.json();
+
+// create url encoded parses
+const urlencodedParser = bodyParser.urlencoded({extended: false});
+
+app.use(morgan('combined'));
+app.use(express.static('public'));
+app.use(jsonParser);
+app.use(urlencodedParser);
+// be able to access everything in this public folder
+app.use('/', routes);
+
+// when in the url we go to slash, use routes
+
 
 /*
 example of how nunjucks works:
@@ -47,16 +59,14 @@ nunjucks.render('index.html', locals, function(err, output) {
 });
 */
 
-
-
 // const people = [{name: "Full"}, {name: "Stacker"}, {name: "Son"}];
 
 // // setting conventions for when we send responses. what format are we sending them in?
-// app.set('view-engine', 'html'); // have res.render work with html files
+app.set('view-engine', 'html'); // have res.render work with html files
 // // we are setting the view engine to html
-// app.engine('html', nunjucks.render); // when giving html files to res.render tell it to use nunjucks
+app.engine('html', nunjucks.render); // when giving html files to res.render tell it to use nunjucks
 // // first arg: extension: .html, when we have html, use nunjucks
-// nunjucks.configure('views', {noCache: true}); // turns off caching
+nunjucks.configure('views', {noCache: true}); // turns off caching
 
 // app.get('/', function(req, res){
 //     // res.send('Welcome to Twitter');
@@ -68,22 +78,5 @@ nunjucks.render('index.html', locals, function(err, output) {
 //     res.send(`What's going on in the world today?`);
 //     //next();
 // })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 app.listen(3000, () => console.log(`We're listening on 3000`));

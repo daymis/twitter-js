@@ -70,6 +70,8 @@ nunjucks.render('index.html', locals, function(err, output) {
 // })
 
 
+// res.render = renders
+// res.send = sends (hidden response)
 
 
 
